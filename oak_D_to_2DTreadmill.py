@@ -244,7 +244,7 @@ with dai.Device(pipeline) as device:
 
                         # only write out motor commands once, for the most probable track
                         if i == 0:
-                            x_dev_out, y_dev_out = abs(int(x_dev[0][0])), abs(int(y_dev[0][0]))
+                            x_dev_out, y_dev_out = int(x_dev[0][0]), int(y_dev[0][0])
                             command = "X " + str(x_dev_out) + " Y " + str(y_dev_out) + "      \n"
                             ser.write(command.encode(encoding='UTF-8'))
 

@@ -10,11 +10,15 @@ boolean newData = false;
 unsigned long trigger_delay_x = 0;
 unsigned long trigger_delay_y = 0;
 
-int stepper_delay_x = 1000;
-int stepper_delay_y = 1000;
+double stepper_delay_x = 1000;
+double stepper_delay_y = 1000;
 
 int dev_x = 1000;
 int dev_y = 1000;
+
+#include <PIDController.h>
+PIDController pid_x;
+PIDController pid_y;
 
 void setup() {
   // start communication
@@ -29,6 +33,16 @@ void setup() {
   pinMode(52, OUTPUT);
   pinMode(53, OUTPUT);
   digitalWrite(52, HIGH);
+
+  pid_x.begin();          // initialize the PID instance
+  pid_x.setpoint(0);    // The "goal" the PID controller tries to "reach"
+  pid_x.tune(20, 5, 5);    // Tune the PID, arguments: kP, kI, kD
+  pid_x.limit(20, 6400);    // Limit the PID output between 0 and 255, this is important to get rid of integral windup!  
+
+  pid_y.begin();          // initialize the PID instance
+  pid_y.setpoint(0);    // The "goal" the PID controller tries to "reach"
+  pid_y.tune(20, 5, 5);    // Tune the PID, arguments: kP, kI, kD
+  pid_y.limit(20, 6400);    // Limit the PID output between 0 and 255, this is important to get rid of integral windup!  
 }
 
 void loop() {
@@ -80,9 +94,19 @@ void showNewData() {
         Serial.print("New stepper delays: X ");
         Serial.print(sPtr [1]);
 
+        stepper_delay_x = 6400 - pid_x.compute(dev_x);
+
+                Serial.print("  new x_delay: ");
+        Serial.print(stepper_delay_x);
+
         dev_y = atoi(sPtr [3]);
         Serial.print(" , Y ");
-        Serial.println(sPtr [3]);
+        Serial.print(sPtr [3]);
+
+        stepper_delay_y = 6400 - pid_y.compute(dev_y);
+
+        Serial.print("  new y_delay: ");
+        Serial.println(stepper_delay_y);
 
         newData = false;
     }
