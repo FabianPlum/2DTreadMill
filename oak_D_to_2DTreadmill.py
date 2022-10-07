@@ -6,8 +6,8 @@ import numpy as np
 import time
 import blobconverter
 
-nnPath = blobconverter.from_openvino(xml="I:/THE_STICK/stick_tiny_YOLO_v4/yolov4_tiny_sticks.xml",
-                                     bin="I:/THE_STICK/stick_tiny_YOLO_v4/yolov4_tiny_sticks.bin",
+nnPath = blobconverter.from_openvino(xml="stick_tiny_YOLO_v4/yolov4_tiny_sticks.xml",
+                                     bin="stick_tiny_YOLO_v4/yolov4_tiny_sticks.bin",
                                      data_type="FP16",
                                      shaves=6,
                                      version="2021.3",
