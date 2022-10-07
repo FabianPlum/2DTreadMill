@@ -13,6 +13,8 @@ unsigned long trigger_delay_y = 0;
 int stepper_delay_x = 1000;
 int stepper_delay_y = 1000;
 
+int dev_x = 1000;
+int dev_y = 1000;
 
 void setup() {
   // start communication
@@ -74,18 +76,14 @@ void showNewData() {
     if (newData == true) {
         int N = separate (receivedChars, sPtr, SPTR_SIZE);
 
-        if (atoi(sPtr [1]) > 0){
-          stepper_delay_x = atoi(sPtr [1]);
-          Serial.print("New stepper delays: X ");
-          Serial.print(sPtr [1]);
+        dev_x = atoi(sPtr [1]);
+        Serial.print("New stepper delays: X ");
+        Serial.print(sPtr [1]);
 
-          stepper_delay_y = atoi(sPtr [3]);
-          Serial.print(" , Y ");
-          Serial.println(sPtr [3]);
+        dev_y = atoi(sPtr [3]);
+        Serial.print(" , Y ");
+        Serial.println(sPtr [3]);
 
-        } else {
-          Serial.println("Invalid command! Integers only, please!");
-        }
         newData = false;
     }
 }
