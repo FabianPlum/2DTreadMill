@@ -1,10 +1,18 @@
-int stepper_delay = 1000;
 const byte numChars = 32;
 char receivedChars[numChars];   // an array to store the received data
+
+const unsigned int MAX_COMMAND_LENGTH = 100;
+#define SPTR_SIZE   20
+char   *sPtr [SPTR_SIZE];
+signed long number;
 
 boolean newData = false;
 unsigned long trigger_delay_x = 0;
 unsigned long trigger_delay_y = 0;
+
+int stepper_delay_x = 1000;
+int stepper_delay_y = 1000;
+
 
 void setup() {
   // start communication
@@ -28,13 +36,13 @@ void loop() {
   if (micros() >= trigger_delay_y){ 
     digitalWrite(3, LOW);
     digitalWrite(3, HIGH);
-    trigger_delay_y += stepper_delay;
+    trigger_delay_y += stepper_delay_y;
   }
 
   if (micros() >= trigger_delay_x){
     digitalWrite(53, LOW);
     digitalWrite(53, HIGH);
-    trigger_delay_x += stepper_delay;
+    trigger_delay_x += stepper_delay_x;
   }
 
 }
@@ -64,10 +72,17 @@ void recvWithEndMarker() {
 
 void showNewData() {
     if (newData == true) {
-        if (atoi(receivedChars) > 0){
-          stepper_delay = atoi(receivedChars);
-          Serial.print("New stepper delay: ");
-          Serial.println(receivedChars);
+        int N = separate (receivedChars, sPtr, SPTR_SIZE);
+
+        if (atoi(sPtr [1]) > 0){
+          stepper_delay_x = atoi(sPtr [1]);
+          Serial.print("New stepper delays: X ");
+          Serial.print(sPtr [1]);
+
+          stepper_delay_y = atoi(sPtr [3]);
+          Serial.print(" , Y ");
+          Serial.println(sPtr [3]);
+
         } else {
           Serial.println("Invalid command! Integers only, please!");
         }
