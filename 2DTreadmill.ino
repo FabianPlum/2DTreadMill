@@ -13,8 +13,13 @@ unsigned long trigger_delay_y = 0;
 double stepper_delay_x = 1000;
 double stepper_delay_y = 1000;
 
-int dev_x = 1000;
-int dev_y = 1000;
+double pid_x_val = 0;
+double pid_y_val = 0;
+
+int dev_x = 0;
+int dev_y = 0;
+
+int dead_band = 5; // if the absolute PID response is smaller than this value, stop all motors.
 
 #include <PIDController.h>
 PIDController pid_x;
@@ -36,29 +41,48 @@ void setup() {
 
   pid_x.begin();          // initialize the PID instance
   pid_x.setpoint(0);    // The "goal" the PID controller tries to "reach"
-  pid_x.tune(20, 5, 5);    // Tune the PID, arguments: kP, kI, kD
-  pid_x.limit(20, 6400);    // Limit the PID output between 0 and 255, this is important to get rid of integral windup!  
+  pid_x.tune(10, 8, 3);    // Tune the PID, arguments: kP, kI, kD
+  pid_x.limit(-6400, 6400);    // Limit the PID output
 
   pid_y.begin();          // initialize the PID instance
   pid_y.setpoint(0);    // The "goal" the PID controller tries to "reach"
-  pid_y.tune(20, 5, 5);    // Tune the PID, arguments: kP, kI, kD
-  pid_y.limit(20, 6400);    // Limit the PID output between 0 and 255, this is important to get rid of integral windup!  
+  pid_y.tune(10, 8, 3);    // Tune the PID, arguments: kP, kI, kD
+  pid_y.limit(-6400, 6400);    // Limit the PID output  
 }
 
 void loop() {
+  // check for new inputs & process them
   recvWithEndMarker();
-  showNewData();
+  processNewData();
 
-  if (micros() >= trigger_delay_y){ 
-    digitalWrite(3, LOW);
-    digitalWrite(3, HIGH);
-    trigger_delay_y += stepper_delay_y;
+  // switch the motor orientation with sign switches
+  if (stepper_delay_x >= 0){
+    digitalWrite(52, HIGH);
+  } else {
+    digitalWrite(52, LOW);
+  }
+  
+  if (micros() >= trigger_delay_x){
+    trigger_delay_x += stepper_delay_x;
+    if (abs(pid_x_val) >= dead_band){
+      digitalWrite(53, LOW);
+      digitalWrite(53, HIGH);
+    }
   }
 
-  if (micros() >= trigger_delay_x){
-    digitalWrite(53, LOW);
-    digitalWrite(53, HIGH);
-    trigger_delay_x += stepper_delay_x;
+  // switch the motor orientation with sign switches
+  if (stepper_delay_y >= 0){
+    digitalWrite(2, HIGH);
+  } else {
+    digitalWrite(2, LOW);
+  }
+  
+  if (micros() >= trigger_delay_y){
+    trigger_delay_y += stepper_delay_y;
+    if (abs(pid_y_val) >= dead_band){
+      digitalWrite(3, LOW);
+      digitalWrite(3, HIGH);
+    }
   }
 
 }
@@ -86,7 +110,7 @@ void recvWithEndMarker() {
     }
 }
 
-void showNewData() {
+void processNewData() {
     if (newData == true) {
         int N = separate (receivedChars, sPtr, SPTR_SIZE);
 
@@ -94,16 +118,18 @@ void showNewData() {
         Serial.print("New stepper delays: X ");
         Serial.print(sPtr [1]);
 
-        stepper_delay_x = 6400 - pid_x.compute(dev_x);
+        pid_x_val = pid_x.compute(dev_x);
+        stepper_delay_x = 6400 / pid_x_val;
 
-                Serial.print("  new x_delay: ");
+        Serial.print("  new x_delay: ");
         Serial.print(stepper_delay_x);
 
         dev_y = atoi(sPtr [3]);
         Serial.print(" , Y ");
         Serial.print(sPtr [3]);
 
-        stepper_delay_y = 6400 - pid_y.compute(dev_y);
+        pid_y_val = pid_x.compute(dev_y);
+        stepper_delay_x = 6400 / pid_y_val;
 
         Serial.print("  new y_delay: ");
         Serial.println(stepper_delay_y);
