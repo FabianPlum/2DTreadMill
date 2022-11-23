@@ -61,11 +61,11 @@ tracker_KF = Tracker(dist_thresh=250,
                      y_std_meas=0.5,
                      dt=1 / 60)
 
-max_allowed_deviation = 40
+max_allowed_deviation = 50
 
 print("INITIALISED TRACKER!")
 
-ser = serial.Serial("COM3", 115200, timeout=None)
+ser = serial.Serial("COM8", 115200, timeout=None)
 time.sleep(2)
 print("Opened connection to 2DTreadMill Arduino")
 
