@@ -42,12 +42,12 @@ void setup() {
 
   pid_x.begin();          // initialize the PID instance
   pid_x.setpoint(0);    // The "goal" the PID controller tries to "reach"
-  pid_x.tune(0.5, 0.1, 0);    // Tune the PID, arguments: kP, kI, kD
+  pid_x.tune(0.5, 0.01, 0.01);    // Tune the PID, arguments: kP, kI, kD
   pid_x.limit(-6400, 6400);    // Limit the PID output
 
   pid_y.begin();          // initialize the PID instance
   pid_y.setpoint(0);    // The "goal" the PID controller tries to "reach"
-  pid_y.tune(0.5, 0.1, 0);    // Tune the PID, arguments: kP, kI, kD
+  pid_y.tune(0.5, 0.01, 0.01);    // Tune the PID, arguments: kP, kI, kD
   pid_y.limit(-6400, 6400);    // Limit the PID output  
 }
 
@@ -128,7 +128,7 @@ void recvWithEndMarker() {
     }
 }
 
-void processNewData() {
+void processNewData(){
     if (newData == true) {
         int N = separate (receivedChars, sPtr, SPTR_SIZE);
 
@@ -160,8 +160,7 @@ void processNewData() {
     }
 }
 
-int separate (String str, char **p, int size)
-{
+int separate (String str, char **p, int size){
     int  n;
     char s [100];
 

@@ -257,3 +257,18 @@ with dai.Device(pipeline) as device:
 
             if cv2.waitKey(1) == ord('q'):
                 break
+
+    cv2.destroyAllWindows()
+
+    print("Stopping motors...")
+    for i in range(100):
+        time.sleep(0.02)
+        command = "STOP\n"
+        ser.write(command.encode(encoding='UTF-8'))
+        line = ser.readline()
+        if line:
+            string = line.decode()
+
+    print("\nMotors stopped. Closing OAK connection...")
+
+print("Closed OAK connection.")
