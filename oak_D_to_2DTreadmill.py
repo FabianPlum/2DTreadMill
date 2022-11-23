@@ -97,7 +97,7 @@ camRgb.setColorOrder(dai.ColorCameraProperties.ColorOrder.BGR)
 camRgb.setFps(60)
 
 # Network specific settings
-detectionNetwork.setConfidenceThreshold(0.7)
+detectionNetwork.setConfidenceThreshold(0.65)
 detectionNetwork.setNumClasses(1)
 detectionNetwork.setCoordinateSize(4)
 detectionNetwork.setAnchors([10, 14, 23, 27, 37, 58, 81, 82, 135, 169, 344, 319])
@@ -261,13 +261,12 @@ with dai.Device(pipeline) as device:
     cv2.destroyAllWindows()
 
     print("Stopping motors...")
+
     for i in range(100):
         time.sleep(0.02)
-        command = "STOP\n"
+        command = "X " + str(0.5) + " Y " + str(0.5) + "        \n"
         ser.write(command.encode(encoding='UTF-8'))
         line = ser.readline()
-        if line:
-            string = line.decode()
 
     print("\nMotors stopped. Closing OAK connection...")
 

@@ -132,29 +132,45 @@ void processNewData(){
     if (newData == true) {
         int N = separate (receivedChars, sPtr, SPTR_SIZE);
 
-        dev_x = atoi(sPtr [1]);
-        Serial.print("New stepper delays: X ");
-        Serial.print(sPtr [1]);
+        if (atof(sPtr [1]) == 0.5){
+          if (stepper_delay_x > 0){
+            stepper_delay_x += 100;
+          } else {
+            stepper_delay_x -= 100;
+          }
+          if (stepper_delay_y > 0){
+            stepper_delay_y += 100;
+          } else {
+            stepper_delay_y -= 100;
+          }
+          Serial.println("MOTOR(S) STOP");
+          
+        } else {  
+          dev_x = atoi(sPtr [1]);
+          Serial.print("New stepper delays: X ");
+          Serial.print(sPtr [1]);
 
-        pid_x_val = pid_x.compute(dev_x);
-        if (round(abs(pid_x_val)) <= dead_band_upper && round(abs(pid_x_val)) >= 1){
-          stepper_delay_x = dead_band_upper / pid_x_val;
+          pid_x_val = pid_x.compute(dev_x);
+          if (round(abs(pid_x_val)) <= dead_band_upper && round(abs(pid_x_val)) >= 1){
+            stepper_delay_x = dead_band_upper / pid_x_val;
+          }
+
+          Serial.print("  new x_delay: ");
+          Serial.print(stepper_delay_x);
+
+          dev_y = atoi(sPtr [3]);
+          Serial.print(" , Y ");
+          Serial.print(sPtr [3]);
+
+          pid_y_val = pid_x.compute(dev_y);
+          if (round(abs(pid_y_val)) <= dead_band_upper && round(abs(pid_y_val)) >= 1){          
+            stepper_delay_y = dead_band_upper / pid_y_val;
+          }
+
+          Serial.print("  new y_delay: ");
+          Serial.println(stepper_delay_y);
+
         }
-
-        Serial.print("  new x_delay: ");
-        Serial.print(stepper_delay_x);
-
-        dev_y = atoi(sPtr [3]);
-        Serial.print(" , Y ");
-        Serial.print(sPtr [3]);
-
-        pid_y_val = pid_x.compute(dev_y);
-        if (round(abs(pid_y_val)) <= dead_band_upper && round(abs(pid_y_val)) >= 1){          
-          stepper_delay_y = dead_band_upper / pid_y_val;
-        }
-
-        Serial.print("  new y_delay: ");
-        Serial.println(stepper_delay_y);
 
         newData = false;
     }
