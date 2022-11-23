@@ -1,6 +1,8 @@
 # 2DTreadmill
 The omni-directional treadmill we were told not to build.
 
+![](images/2D_render_combined.jpg)
+
 *"Yeah, I don't think that is going to work."*
 
 ## Installing dependencies
@@ -28,3 +30,7 @@ We try to keep the Arduino dependencies as light-weight as possible.
 For now, all that is required is the [PIDController library](https://www.arduino.cc/reference/en/libraries/pidcontroller/)
 
 We're running an Arduino Mega 2560 and the latest [IDE](https://www.arduino.cc/en/software).
+
+![](images/concept_omni_directional_treadmill_03.png)
+![](images/concept_omni_directional_treadmill_04.png)
+![](images/concept_omni_directional_treadmill_05.png)
