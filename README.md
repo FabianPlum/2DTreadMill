@@ -42,6 +42,9 @@ We're running an Arduino Mega 2560 and the latest [IDE](https://www.arduino.cc/e
 
 ### rework parts
 
+<img src=images/TODO_full_frame.jpg width="600">
+<img src=images/TODO_axle_height.jpg width="600">
+
 * **Main (X) axle holders [build fully aluminum frame model altogether]**
     * The mounting points for perpendicular struts need to be elongated to ensure that connecting struts can be
       mounted flush (important for the (X) motor mount)
@@ -54,6 +57,8 @@ We're running an Arduino Mega 2560 and the latest [IDE](https://www.arduino.cc/e
       Otherwise, it becomes difficult to mount perpendicular elements
     * only attach tensioning threads for X belts to one side in full frame (box) setup
 
+<img src=images/TODO_Y_belts.jpg width="600">
+
 * **Y belt carriers**
     * consider reinforcing tightening elements to avoid breaking during tracking adjustment
     * drum thickness to minimise distance between large and small segment elements
@@ -65,6 +70,9 @@ We're running an Arduino Mega 2560 and the latest [IDE](https://www.arduino.cc/e
     * to be added to the base struts to provide clearance from the ground
     * make 6 feet in total, with dampening (using the left-over TPU cast wheels)
     * add M5 screws / threads with locking nuts inside them to make the exact height adjustable
+
+<img src=images/TODO_rail_guide.jpg width="600"> 
+
 * **guided rail**
     * requires adding guide wheels to (at least) the larger Y belt segments
     * Use guided rail for the upper side only, with on-ramping elements on either side to ensure level belts
