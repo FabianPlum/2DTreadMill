@@ -65,9 +65,18 @@ max_allowed_deviation = 50
 
 print("INITIALISED TRACKER!")
 
-ser = serial.Serial("COM8", 115200, timeout=None)
-time.sleep(2)
-print("Opened connection to 2DTreadMill Arduino")
+found_arduino = False
+try:
+    ser = serial.Serial("COM8", 115200, timeout=None)
+    time.sleep(2)
+    print("Opened connection to 2DTreadMill Arduino")
+    found_arduino = True
+except:
+    print("Failed to open Serial Port! Double check your ODT is connected correctly!")
+    print("Running Oak-D demo mode in...")
+    for i in range(3):
+        print(3-i)
+        time.sleep(1)
 
 # some necessary defenitions
 font = cv2.FONT_HERSHEY_SIMPLEX
@@ -243,15 +252,16 @@ with dai.Device(pipeline) as device:
                                     (2, 40), cv2.FONT_HERSHEY_TRIPLEX, 0.4, color_dev)
 
                         # only write out motor commands once, for the most probable track
-                        if i == 0:
-                            x_dev_out, y_dev_out = int(x_dev[0][0]), int(y_dev[0][0])
-                            command = "X " + str(x_dev_out) + " Y " + str(y_dev_out) + "      \n"
-                            ser.write(command.encode(encoding='UTF-8'))
+                        if found_arduino:
+                            if i == 0:
+                                x_dev_out, y_dev_out = int(x_dev[0][0]), int(y_dev[0][0])
+                                command = "X " + str(x_dev_out) + " Y " + str(y_dev_out) + "      \n"
+                                ser.write(command.encode(encoding='UTF-8'))
 
-                            line = ser.readline()
-                            if line:
-                                string = line.decode()
-                                print(string[:-2])
+                                line = ser.readline()
+                                if line:
+                                    string = line.decode()
+                                    print(string[:-2])
 
             cv2.imshow("preview", frame)
 
@@ -262,12 +272,13 @@ with dai.Device(pipeline) as device:
 
     print("Stopping motors...")
 
-    for i in range(100):
-        time.sleep(0.02)
-        command = "X " + str(0.5) + " Y " + str(0.5) + "        \n"
-        ser.write(command.encode(encoding='UTF-8'))
-        line = ser.readline()
+    if found_arduino:
+        for i in range(100):
+            time.sleep(0.02)
+            command = "X " + str(0.5) + " Y " + str(0.5) + "        \n"
+            ser.write(command.encode(encoding='UTF-8'))
+            line = ser.readline()
 
-    print("\nMotors stopped. Closing OAK connection...")
+        print("\nMotors stopped. Closing OAK connection...")
 
 print("Closed OAK connection.")
